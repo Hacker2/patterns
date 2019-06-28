@@ -3,21 +3,21 @@ package decorator;
 public class Main {
     public static void main(String[] args) {
         PizzaClass pizzaClass = new PizzaClass();
-        pizzaClass.paperoni = true;
+        pizzaClass.pepperoni = true;
         System.out.println(pizzaClass.getPizza());
 
         PizzaCheeze pizzaCheeze = new PizzaCheeze(new DoughForPizze());
-        PizzaPaperoni pizzaPaperoni = new PizzaPaperoni(pizzaCheeze);
-        System.out.println(pizzaPaperoni.getPizza());
+        PizzaPepperoni pizzaPepperoni = new PizzaPepperoni(pizzaCheeze);
+        System.out.println(pizzaPepperoni.getPizza());
     }
 }
 interface Pizza {
     String getPizza();
 }
-class PizzaWithPaperoni implements Pizza {
+class PizzaWithPepperoni implements Pizza {
     @Override
     public String getPizza() {
-        return "with paperoni";
+        return "with pepperoni";
     }
 }
 class PizzaWithCheeze implements Pizza {
@@ -26,21 +26,21 @@ class PizzaWithCheeze implements Pizza {
         return "with cheeze";
     }
 }
-class PizzaWithCheezeAndPaperoni implements Pizza {
+class PizzaWithCheezeAndPepperoni implements Pizza {
     @Override
     public String getPizza() {
-        return "with paperoni, cheeze";
+        return "with pepperoni, cheeze";
     }
 }
 
 class PizzaClass implements Pizza {
-    boolean paperoni;
+    boolean pepperoni;
     boolean cheeze;
 
     @Override
     public String getPizza() {
         return  "with" +
-                (paperoni ? " paperoni" : "") +
+                (pepperoni ? " pepperoni" : "") +
                 (cheeze ? " cheeze" : "");
     }
 }
@@ -51,17 +51,17 @@ class DoughForPizze implements Pizza {
         return  "with";
     }
 }
-class PizzaPaperoni implements Pizza {
+class PizzaPepperoni implements Pizza {
 
     Pizza pizza;
 
-    public PizzaPaperoni(Pizza pizza) {
+    public PizzaPepperoni(Pizza pizza) {
         this.pizza = pizza;
     }
 
     @Override
     public String getPizza() {
-        return pizza.getPizza() + " paperoni";
+        return pizza.getPizza() + " pepperoni";
     }
 }
 class PizzaCheeze implements Pizza {
