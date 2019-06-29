@@ -125,7 +125,7 @@ class CoffeeMachine {
         System.out.println("boiled");
     }
     public void makeCoffee() {
-        System.out.println("makeCoffee");
+        System.out.println("makeTea");
     }
 }
 class Phone {
