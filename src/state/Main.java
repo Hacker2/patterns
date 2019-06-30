@@ -1,5 +1,7 @@
 package state;
 
+import java.util.Random;
+
 public class Main {
     public static void main(String[] args) {
         GumMachine gumMachine = new GumMachine();
@@ -8,11 +10,11 @@ public class Main {
         gumMachine.insertQuarter();
         gumMachine.turnCrank();
 
-        State state = new NoQuarterState();
-        state.turnCrank();
-        state.insertQuarter();
-        state.insertQuarter();
-        state.turnCrank();
+        GumMachine2 gumMachine2 = new GumMachine2();
+        gumMachine2.turnCrank();
+        gumMachine2.insertQuarter();
+        gumMachine2.insertQuarter();
+        gumMachine2.turnCrank();
     }
 }
 enum GumMachineState {
@@ -34,14 +36,6 @@ class GumMachine {
             System.out.println("you are winner you don't need quarter");
         }
     }
-//    void ejectQuarter() {
-//        if (state.equals(GumMachineState.HAS_QUARTER) || state.equals(GumMachineState.SOLD_OUT)) {
-//            System.out.println("eject quarter");
-//            state = GumMachineState.NO_QUARTER;
-//        } else if(state.equals(GumMachineState.NO_QUARTER)) {
-//            System.out.println("there is no quarter");
-//        }
-//    }
     void turnCrank() {
         if (state.equals(GumMachineState.HAS_QUARTER)) {
             if(count <= 0) {
@@ -60,37 +54,36 @@ class GumMachine {
         }
     }
 }
-abstract class State {
-    protected State state;
+
+
+class GumMachine2 {
     int count = 10;
-    abstract void insertQuarter();
-    abstract void turnCrank();
-}
-class StateContext extends State {
-
-    @Override
+    State state = new NoQuarterState();
     void insertQuarter() {
-        state.insertQuarter();
+        state.insertQuarter(this);
     }
-
-    @Override
     void turnCrank() {
-        state.turnCrank();
+        state.turnCrank(this);
     }
+}
+abstract class State {
+    int count = 10;
+    abstract void insertQuarter(GumMachine2 gumMachine);
+    abstract void turnCrank(GumMachine2 gumMachine);
 }
 class HasQuarterState extends State {
 
     @Override
-    public void insertQuarter() {
+    public void insertQuarter(GumMachine2 gumMachine) {
         System.out.println("you can't insert another quarter");
     }
     @Override
-    public void turnCrank() {
+    public void turnCrank(GumMachine2 gumMachine) {
         if(count <= 0) {
-            state = new SoldOutState();
+            gumMachine.state = new SoldOutState();
         } else {
             System.out.println("selling...");
-            state = new NoQuarterState();
+            gumMachine.state = new NoQuarterState();
             count--;
         }
     }
@@ -98,42 +91,35 @@ class HasQuarterState extends State {
 class NoQuarterState extends State {
 
     @Override
-    public void insertQuarter() {
-        state = new HasQuarterState();
+    public void insertQuarter(GumMachine2 gumMachine) {
+        if(new Random().nextBoolean()) {
+            gumMachine.state = new WinnerState();
+            System.out.println("return quarter");
+        } else {
+            gumMachine.state = new HasQuarterState();
+        }
     }
     @Override
-    public void turnCrank() {
+    public void turnCrank(GumMachine2 gumMachine) {
         System.out.println("you didn't insert quarter");
     }
 }
 class SoldOutState extends State {
     @Override
-    public void insertQuarter() {
+    public void insertQuarter(GumMachine2 gumMachine) {
         System.out.println("no gums");
     }
     @Override
-    public void turnCrank() { }
+    public void turnCrank(GumMachine2 gumMachine) { }
 }
-
-
-//enum LightStates {
-//    ON, OFF
-//    , MIDDLE
-//}
-//class Light {
-//    LightStates currentState = LightStates.OFF;
-//    boolean lightOn() {
-//        if(currentState.equals(LightStates.OFF)) {
-//            currentState = LightStates.ON;
-//            return true;
-//        }
-//        return false;
-//    }
-//    boolean lightOf() {
-//        if(currentState.equals(LightStates.ON)) {
-//            currentState = LightStates.OFF;
-//            return true;
-//        }
-//        return false;
-//    }
-//}
+class WinnerState extends State {
+    @Override
+    public void insertQuarter(GumMachine2 gumMachine) {
+        System.out.println("You're winner, you don't have to pay");
+    }
+    @Override
+    public void turnCrank(GumMachine2 gumMachine) {
+        System.out.println("you have gum for free");
+        gumMachine.state = new NoQuarterState();
+    }
+}
