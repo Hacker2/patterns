@@ -1,7 +1,10 @@
 package singleton;
 
+import sun.misc.Unsafe;
+
 import java.io.*;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 class SingletonWrapper {
@@ -9,7 +12,7 @@ class SingletonWrapper {
 }
 
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException, InterruptedException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException, InterruptedException, NoSuchFieldException {
         SingletonWrapper singletonWrapper = new SingletonWrapper();
         SingletonWrapper singletonWrapper2 = new SingletonWrapper();
         Thread thread = new Thread(() -> {
@@ -73,6 +76,13 @@ public class Main {
         Class mySingletonClassLoader =  (myClassLoader.loadClass("singleton.MySingleton"));
         MySingleton mySingleton4 = (MySingleton)mySingletonClassLoader.getEnumConstants()[0];
         System.out.println(mySingleton == mySingleton4);
+
+
+        Field field = Unsafe.class.getDeclaredField("theUnsafe");
+        field.setAccessible(true);
+        Unsafe unsafe = (Unsafe)field.get(null);
+        Singleton singleton4 = (Singleton)unsafe.allocateInstance(Singleton.class);
+        System.out.println(singleton == singleton4);
     }
 }
 class StaticSingleton {
