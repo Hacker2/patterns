@@ -10,8 +10,43 @@ public class Main {
         //Europe
         fahrenheitTemperature = new CelsiusTemperature(fahrenheitTemperature);
         wheatherCast.showWheather(fahrenheitTemperature);
+
+        AmericanSocket socket = new SimpleAmericanSocket();
+        Radio radio = new Radio();
+        EuropeanSocket europeanSocket = new SocketAdapter(socket);
+        radio.playMusic(europeanSocket);
     }
 }
+
+interface EuropeanSocket {
+    void getPower();
+}
+interface AmericanSocket {
+    void getPower();
+}
+class SimpleAmericanSocket implements AmericanSocket {
+    public void getPower() {
+        System.out.println("current is 110");
+    }
+}
+class SocketAdapter implements EuropeanSocket {
+    AmericanSocket americanSocket;
+
+    public SocketAdapter(AmericanSocket americanSocket) {
+        this.americanSocket = americanSocket;
+    }
+
+    @Override
+    public void getPower() {
+        americanSocket.getPower();
+    }
+}
+class Radio {
+    void playMusic(EuropeanSocket europeanSocket) {
+        europeanSocket.getPower();
+    }
+}
+
 class FahrenheitTemperature {
 
     int temperature;
